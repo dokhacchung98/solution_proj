@@ -3,54 +3,30 @@
 using namespace std;
 int n, t, d, c;
 int arr[30];
-int s = 0;
-int tmp = 0;
-
-void play(){
-    if(d > c){
-        return;
-    }
-    int l = c - d + 1;
-    if(l % 2 == 0){
-        if(arr[d] > arr[c]){
-            s += arr[d];
-            d++;
-        }else {
-            s += arr[c];
-            c--;
-        }
-    }else {
-        if(arr[d] < arr[c]){
-            d++;
-        }else {
-            c--;
-        }
-    }
-    play();
+int gt[30][30];
+long long getMax(int a, int b){
+    return a > b ? a : b;
 }
-int play2(int d, int c){
+long long getMin(int a, int b){
+    return a < b ? a : b;
+}
+long long play(int d, int c){
     if(d > c){
         return 0;
     }
-    int tong = 0;
-    int l = c - d + 1;
-    if(l % 2 == 0){
-        int s1 = arr[d] + play2(d + 1, c);
-        int s2 = arr[c] + play2(d, c - 1);
-        cout << "asd:" << s1 << " - " << s2<<endl;
-        if(s1 > s2){
-            tong = s1;
-        }else {
-            tong = s2;
-        }
-    }else {
-        if(arr[d] > arr[c]){
-            d++;
-        }else {
-            c--;
-        }
+    if(gt[d][c] != -1){
+        return gt[d][c];
     }
-    return tong;
+    return gt[d][c] = getMax(arr[d] + getMax(play(d+2, c), play(d+1, c-1)), arr[c] + getMax(play(d, c-2), play(d+1, c-1)));
+}
+long long play2(int d, int c){
+    if(d > c){
+        return 0;
+    }
+    if(gt[d][c] != -1){
+        return gt[d][c];
+    }
+    return gt[d][c] = getMax(arr[d] + getMin(play2(d+2, c), play2(d+1, c-1)), arr[c] + getMin(play2(d, c-2), play2(d+1, c-1)));
 }
 int main()
 {
@@ -58,18 +34,21 @@ int main()
     while(t > 0){
         cin >> n;
         d = 0;
-        s = 0;
         for(int i = 0; i < n; i++){
             cin >> arr[i];
+            for(int j = 0; j<n; j++){
+                gt[i][j] = -1;
+            }
         }
-        c = n - 1;
-        play();
-        cout << s << "\t";
-        s = 0;
-        c = n - 1;
-        d = 0;
-        int l = play2(0, n - 1);
-        cout << l;
+        long long v1 = play(0, n - 1);
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j<n; j++){
+                gt[i][j] = -1;
+            }
+        }
+        cout << v1 << " ";
+        long long v = play2(0, n - 1);
+        cout << v << endl;
         t--;
     }
     return 0;
