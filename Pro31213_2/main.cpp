@@ -32,21 +32,21 @@ int getMaxWeight(int n, int m){
 int main()
 {
     int t = 0, n = 0, w = 0;
-    while(t <= 0 || t >= 10){
+   
         cin >> t;
-    }
+
     while(t > 0){
-        while(n <= 3 || n >= 20){
+        
             cin >> n;
-        }
+        
         for(int i=0;i<n;i++){
-            while(arr[i]< 40 || arr[i] > 80){
+            
                 cin >> arr[i];
-            }
+            
         }
-        while(w <= 1 || w >= 240){
+        
             cin >> w;
-        }
+
         int result = getMaxWeight(n, w);
         cout << result << endl;
         t--;
