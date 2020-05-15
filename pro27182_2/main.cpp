@@ -1,98 +1,119 @@
 #include <iostream>
 
 using namespace std;
-int arr[9][9];
-int t;
-int isSoduku = 0;
-int num = 1;
-int isValidate(int i, int j){
-    for(int x = 0; x < 8; x++){
-        if(arr[x][j] == arr[i][j] && x != i){
-            return 0;
+int arr[10][10];
+int flag;
+
+int check_blocks(int x, int y)
+{
+    int startx = x/4;
+    int starty = y/4; int end_x = startx*4 + 4; int end_y = starty*4 + 4;
+    int F[9];
+    for(int ii=0; ii<9; ii++)F[ii] = 0;
+    for(int i=startx*4; i<end_x; i++)
+        for(int j=starty*4; j<end_y; j++)
+        {
+            if(arr[i][j] == 0)continue;
+            F[arr[i][j]]++;
+            if(F[arr[i][j]]>2)
+                return 1;
         }
-        if(arr[i][x] == arr[i][j] && x != j){
-            return 0;
-        }
-    }
-    int x1 = j/4;
-    int y1 = i/4;
-    int d = 0;
-    for(int i1=0; i1<4; i1++){
-        for(int j1=0; j1<4; j1++){
-            if(arr[i1+y1*4][j1+x1*4] == arr[i][j]){
-                if(i1 + y1*4 == i && j1 + x1*4 == j){
-                    d++;
-                }else if(i1 + y1*4 == i || j1 + x1*4 == j){
-                    return 0;
-                }else{
-                    d++;
-                }
-                if(d > 2)
-                    return 0;
-            }
-        }
-    }
-    return 1;
+        return 0;
 }
-void check(int i, int j){
-//    if(isSoduku == 1){
-//        return;
-//    }
-    if(arr[i][j] == 0){
-        for(int x = 0; x < 8; x++){
-            arr[i][j] = x+1;
-            check(i, j);
-            arr[i][j] = 0;
-        }
-    }else{
-        int tmp = isValidate(i, j);
-        if(tmp == 1){
-            if(j < 7){
-                check(i, j+1);
-            }else{
-                if(i < 7){
-                    check(i+1, 0);
-                }else{
-                    isSoduku = 1;
-                    cout << "Test case #"<< num <<": YES" << endl;
-                    for(int k=0; k<8; k++){
-                        for(int g=0; g<8; g++){
-                            cout << arr[k][g] << " ";
-                        }
-                        cout << endl;
-                    }
-                    return;
-                }
+int check_row_col(int index_x, int index_y)
+{
+    int F_row[10];
+    int F_col[10];
+    for(int i=0; i<9; i++)F_row[i] = F_col[i] =0;
+    for(int i=0; i<8; i++){
+        if(arr[index_x][i]==0)continue;
+        F_row[arr[index_x][i]]++;
+        if(F_row[arr[index_x][i]]>1)
+            return 1;
+    }
+    for(int i=0; i<8; i++){
+        if(arr[i][index_y]==0)continue;
+        F_col[arr[i][index_y]]++;
+        if(F_col[arr[i][index_y]]>1)
+            return 1;
+    }
+    return 0;
+}
+int check_full_row_col()
+{
+    for(int i=0; i<8; i++)
+        if(check_row_col(i,i)==1)return 1;
+    return 0;
+}
+void sodoku(int x, int y)
+{
+    if(x>=8)
+    {
+        flag = 1;
+        return;
+    }
+    if(arr[x][y]!=0)
+    {
+        if(y<7)sodoku(x, y+1);
+        else sodoku(x+1, 0);
+    }
+    else
+    {
+        for(int i=1; i<=8; i++)
+        {
+            arr[x][y] = i;
+            if(!check_row_col(x, y)&&!check_blocks(x, y))
+            {
+                if(y<7)sodoku(x, y+1);
+                else sodoku(x+1, 0);
             }
-        }else{
-            return;
+            if(flag==1)return;
+            arr[x][y] = 0;
         }
     }
 }
+
 int main()
 {
-    cin >> t;
-    int num = 1;
-    while(t > 0){
-        isSoduku = 0;
-        for(int i=0; i<8; i++){
-            for(int j=0; j<8; j++){
-                cin >> arr[i][j];
+    int nTestCase;
+    scanf("%d", &nTestCase);
+    for(int test=1; test<=nTestCase; test++)
+    {
+        int startx = -1, starty = -1;
+        for(int i=0; i<8; i++)
+            for(int j=0; j<8; j++)
+            {
+                scanf("%d", &arr[i][j]);
+                if(arr[i][j]==0&&startx==-1)
+                {
+                    startx = i;
+                    starty = j;
+                }
             }
-        }
-        check(0, 0);
-        if(isSoduku == 0){
-            cout << "Test case #"<< num <<": NO" << endl;
-        }
-        num++;
-        t--;
+            flag = 0;
+            if(!check_blocks(0,0)&&!check_blocks(0,4)&&!check_blocks(4,0)&&!check_blocks(4,4)&&!check_full_row_col())
+            {
+                sodoku(startx, starty);
+                if(flag)
+                {
+                    printf("Test case #%d: YES\n", test);
+                    for(int i=0; i<8; i++)
+                    {
+                        for(int j=0; j<8; j++)
+                            printf("%d ", arr[i][j]);
+                        printf("\n");
+                    }
+                }
+                else printf("Test case #%d: NO\n", test);
+            }
+            else printf("Test case #%d: NO\n", test);
     }
     return 0;
 }
 
 
 /*
-4
+5
 8 0 0 0 0 0 0 0
 0 0 0 0 0 0 6 0
 0 0 0 3 0 0 0 0
@@ -128,5 +149,14 @@ int main()
 1 1 1 1 1 1 1 1
 1 1 1 1 1 1 1 1
 1 1 1 1 1 1 1 1
+
+8 1 2 4 3 5 7 6
+1 2 3 5 4 7 6 8
+4 6 7 3 5 1 8 2
+6 8 5 7 1 2 3 4
+2 3 1 6 8 4 5 7
+7 4 6 8 2 3 1 5
+5 7 4 1 6 8 2 3
+3 5 8 2 7 6 4 1
 */
 
