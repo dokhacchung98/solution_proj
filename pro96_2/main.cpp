@@ -1,113 +1,63 @@
-#include <iostream>
-
+#include<iostream>
 using namespace std;
-char arr[30][30];
-int hasMove[30][30];
-int w;
-int h;
-int x;
-int y;
-int t = -1;
-int tmp = 0;
-int drow[] = {-1,0,1, 0};
-int dcol[] = { 0,1,0,-1};
-void tryMove(int i, int j){
-    if(arr[i][j] == 'D'){
-        if(tmp < t || t == -1){
-            t = tmp;
-        }
-        return;
+
+char arr[29][29];
+int tmp[28][28];
+int ans;
+int row , col,desi,sori,desj,sorj;
+
+void tryMove(int i,int j,int cur_tmp){
+    if (cur_tmp>=ans) return ;
+    if(cur_tmp>=tmp[i][j]) return ;
+    else tmp[i][j]=cur_tmp;
+    if(arr[i+1][j]=='D' || arr[i][j+1]=='D' || arr[i-1][j]=='D' || arr[i][j-1]=='D'){
+        ans=cur_tmp;
+        return ;
     }
-    for(int g = 0; g<4; g++){
-        if(arr[i + drow[g]][j+dcol[g]] != 'X' && hasMove[i + drow[g]][j+dcol[g]] == 0){
-            int k = 0;
-            if(arr[i + drow[g]][j+dcol[g]] != 'D')
-            k = arr[i + drow[g]][j+dcol[g]] - 48;
-            if(tmp + k > t && t != -1){
-                return;
-            }
-            tmp += k;
-            hasMove[i + drow[g]][j+dcol[g]] = 1;
-            tryMove(i + drow[g], j+dcol[g]);
-            hasMove[i + drow[g]][j+dcol[g]] = 0;
-            tmp -= k;
-        }
-    }
+    if(arr[i+1][j]!='X') tryMove(i+1,j,(cur_tmp+arr[i+1][j]-48));
+    if(arr[i][j+1]!='X') tryMove(i,j+1,(cur_tmp+arr[i][j+1]-48));
+    if(arr[i-1][j]!='X') tryMove(i-1,j,(cur_tmp+arr[i-1][j]-48));
+    if(arr[i][j-1]!='X') tryMove(i,j-1,(cur_tmp+arr[i][j-1]-48));
+    return ;
 }
-int main()
-{
+
+int main(){
+    int i,j;
+    int temp1,temp2;
     while(1){
-        cin >> w;
-        cin >> h;
-        tmp = 0;
-        t = -1;
-        if(w == 0 && h == 0){
-            break;
+        ans=1<<20;
+        for(i=0;i<28;i++) for(j=0;j<28;j++) tmp[i][j]=1<<20;
+        cin >> col >> row;
+        if(row==0 && col==0) break;
+        getchar();
+        temp1=row+1;
+        temp2=col+1;
+        for(i=0;i<=temp1;i++){
+            arr[i][0]='X';
+            arr[i][temp2]='X';
         }
-        if(w == 0 || h == 0){
-            cout<<"0\n";
-        }else {
-            int checkS = 0;
-            int checkD = 0;
-            for(int i = 0; i < w + 2; i++){
-                arr[0][i] = 'X';
-                arr[h+1][i] = 'X';
-            }
-            for(int i = 1; i < h + 1; i++){
-                arr[i][0] = 'X';
-                arr[i][w+1] = 'X';
-            }
-            for(int i = 1; i < h + 1; i++){
-                for(int j = 1; j < w + 1; j++){
-                    cin >> arr[i][j];
-                    if(arr[i][j] == 'S'){
-                        checkS = 1;
-                        x = j;
-                        y = i;
-                        arr[i][j] = 'X';
-                    }else if(arr[i][j] == 'D'){
-                        checkD = 1;
-                    }
+        for(i=0;i<=temp2;i++){
+            arr[temp1][i]='X';
+            arr[0][i]='X';
+        }
+
+        for(i=1;i<=row;i++){
+            for(j=1;j<=col;j++){
+                cin >> arr[i][j];
+                if(arr[i][j]=='S') {
+                    sori=i;
+                    sorj=j;
+                }
+                if(arr[i][j]=='D'){
+                    desi=i;
+                    desj=j;
                 }
             }
-            if(checkS == 0 || checkD == 0)
-                cout << "0" << endl;
-            else{
-                tryMove(y, x);
-                if(t == -1)
-                    cout << "0" << endl;
-                else
-                    cout << t <<endl;
-            }
+            getchar();
         }
+
+        tryMove(sori,sorj,0);
+        cout << ans << endl;
     }
     return 0;
 }
-
-
-/*
-20 20
-7448822082943S812608
-19410745968127836544
-79476935490731581276
-88699210476042515010
-80373022571779474473
-63070235345957968468
-10803035186620419899
-40396552852609319752
-93267692148984371304
-16640425426879478834
-42497743988347139696
-38128409472303376648
-35207600535665538310
-14435160499317200275
-61301550872530577086
-35596883798567616583
-36176073856513654431
-58830131939958802283
-09960228422528540234
-2854431034062719741D
-
-0 0
-
-*/
