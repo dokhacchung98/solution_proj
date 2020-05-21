@@ -7,7 +7,6 @@ int tmp[10000];
 int checkNodeEmpty = 0;
 int tmpNodeTop = -1;
 int checkBound = 0;
-int as = 0;
 void checkNode(int k){
     if(checkNodeEmpty == 1 || checkBound == 1){
         return;
