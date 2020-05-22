@@ -9,30 +9,25 @@ int n;
 int ans = 0;
 int v = 0;
 int check(int x, int y){
-    if((ts[x] < ts[y] && te[x] > ts[y])||
-       (ts[x] > ts[y] && ts[x] < te[y])){
-            return 1;
-       }
-    return 0;
-}
-void tryget(int x){
-    if(v > ans){
-        ans = v;
+    for(int i = x; i <= y; i++){
+        if(tmp[i] == 1){
+            return 0;
+        }
     }
-    for(int i = x; i < n; i++){
-        if(tmp[i] == 0){
-            int c = 0;
-            for(int j = 0; j < n; j++){
-                if(tmp[j] == 1 && check(j, i) == 1){
-                    c = 1;
+    return 1;
+}
+void tryget(x){
+    if(x == n - 1 && ans )
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j <= n; j++){
+            tmp[j] = 0;
+        }
+        for(int j = i; j < n; j++){
+            if(check(ts[j], te[j]) == 1){
+                ans++;
+                for(int k = ts[j]; k <= te[j]; k++){
+                    tmp[k] = 1;
                 }
-            }
-            if(c == 0){
-                tmp[i] = 1;
-                v++;
-                tryget(i);
-                v--;
-                tmp[i] = 0;
             }
         }
     }
@@ -48,7 +43,7 @@ int main()
             scanf("%d",&ts[i]);
             scanf("%d",&te[i]);
         }
-        tryget(0);
+        tryget();
         printf("%d\n",ans);
         t--;
     }
