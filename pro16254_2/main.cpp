@@ -714,3 +714,94 @@ int main()
 // -1
 // -1
 // 0
+
+#include <iostream>
+#include <queue>
+ 
+#define ll long long
+ 
+using namespace std;
+ 
+int main(int argc, const char * argv[])
+{
+    ll t;
+    scanf(" %lld", &t);
+    
+    for (ll i = 0; i < t; i++)
+    {
+        priority_queue<ll> max_heap;
+        priority_queue <ll, vector<ll>, greater<ll> > min_heap;
+        ll inp;
+        scanf(" %lld", &inp);
+        
+        max_heap.push(inp);
+        
+        ll n;
+        scanf(" %lld", &n);
+        
+        while (n != 0)
+        {
+            ll length_max_heap = max_heap.size();
+            ll length_min_heap = min_heap.size();
+            ll median;
+            
+            if (length_max_heap > length_min_heap)
+                median = max_heap.top();
+            else if (length_max_heap < length_min_heap)
+                median = min_heap.top();
+            else
+                if (length_max_heap == 0 and length_min_heap == 0)
+                {
+                    max_heap.push(n);
+                    scanf(" %lld", &n);
+                    continue;
+                }
+                else
+                    median = min(max_heap.top(), min_heap.top());
+                            
+            if (n == -1)
+            {
+                printf("%lld\n", median);
+            
+                if (length_max_heap == 0)
+                    min_heap.pop();
+                else if (length_min_heap == 0)
+                    max_heap.pop();
+                else if (max_heap.top() == median)
+                    max_heap.pop();
+                else
+                    min_heap.pop();
+                scanf(" %lld", &n);
+                continue;
+            }
+            
+                    
+            if (n >= median)
+            {
+                if (length_max_heap >= length_min_heap)
+                    min_heap.push(n);
+                else if (length_max_heap < length_min_heap)
+                {
+                    max_heap.push(min_heap.top());
+                    min_heap.pop();
+                    min_heap.push(n);
+                }
+            }
+            
+            else
+            {
+                if (length_max_heap <= length_min_heap)
+                    max_heap.push(n);
+                else if (length_max_heap > length_min_heap)
+                {
+                    min_heap.push(max_heap.top());
+                    max_heap.pop();
+                    max_heap.push(n);
+                }
+            }
+            
+            scanf(" %lld", &n);
+        }
+    }
+}
+ 
